@@ -1,0 +1,51 @@
+<div class="container my-4 app-container">
+  <h2 class="mb-3">Gestion des tâches</h2>
+
+  @if (error) {
+    <div class="alert alert-danger">{{ error }}</div>
+  }
+
+  <!-- Formulaire d'ajout -->
+  <form (ngSubmit)="addTask()" class="mb-3">
+    <input class="form-control mb-2" name="title" placeholder="Titre de la tâche"
+           [(ngModel)]="newTitle" required>
+    <textarea class="form-control mb-2" name="description" rows="2"
+              placeholder="Description de la tâche" [(ngModel)]="newDescription"></textarea>
+    <button type="submit" class="btn btn-primary btn-sm" [disabled]="!newTitle.trim()">
+      Ajouter une tâche
+    </button>
+  </form>
+
+  <!-- Liste des tâches -->
+  <ul class="list-group">
+    @for (task of tasks; track task._id) {
+      <li class="list-group-item d-flex justify-content-between align-items-start gap-2">
+        @if (editingId === task._id) {
+          <div class="flex-grow-1">
+            <input class="form-control form-control-sm mb-1" name="editTitle" [(ngModel)]="editTitle">
+            <textarea class="form-control form-control-sm" rows="2" name="editDesc"
+                      [(ngModel)]="editDescription"></textarea>
+          </div>
+          <div class="d-flex gap-1">
+            <button class="btn btn-success btn-sm" (click)="saveEdit(task)">Enregistrer</button>
+            <button class="btn btn-secondary btn-sm" (click)="cancelEdit()">Annuler</button>
+          </div>
+        } @else {
+          <div>
+            <div [class.done]="task.completed" class="fw-semibold">{{ task.title }}</div>
+            <small [class.done]="task.completed">{{ task.description }}</small>
+          </div>
+          <div class="d-flex gap-1">
+            <button class="btn btn-success btn-sm" (click)="toggleCompleted(task)">
+              {{ task.completed ? 'Reprendre' : 'Terminer' }}
+            </button>
+            <button class="btn btn-warning btn-sm" (click)="startEdit(task)">Modifier</button>
+            <button class="btn btn-danger btn-sm" (click)="deleteTask(task)">Supprimer</button>
+          </div>
+        }
+      </li>
+    } @empty {
+      <li class="list-group-item text-muted">Aucune tâche pour le moment.</li>
+    }
+  </ul>
+</div>
